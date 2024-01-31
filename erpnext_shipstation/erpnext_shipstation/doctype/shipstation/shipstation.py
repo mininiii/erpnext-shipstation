@@ -27,11 +27,6 @@ class ShipStationUtils():
 			link = frappe.utils.get_link_to_form('ShipStation', 'ShipStation', frappe.bold('ShipStation Settings'))
 			frappe.throw(_('Please enable ShipStation Integration in {0}'.format(link)), title=_('Mandatory'))
 
-		self.set_shipstation_specific_fields(pickup_contact, delivery_contact)
-		pickup_address.address_title = self.trim_address(pickup_address)
-		delivery_address.address_title = self.trim_address(delivery_address)
-		parcel_list = self.get_parcel_list(json.loads(shipment_parcel), description_of_content)
-
 	def get_available_services(self, delivery_to_type, pickup_address,
 		delivery_address, shipment_parcel, description_of_content, pickup_date,
 		value_of_goods, pickup_contact=None, delivery_contact=None):
