@@ -50,7 +50,6 @@ frappe.ui.form.on('Shipment', {
 				},
 				callback: function(r) {
 					if (r.message && r.message.length) {
-						console.log(r.message);
 						select_from_available_services(frm, r.message);
 					}
 					else {
@@ -176,9 +175,9 @@ function select_from_available_services(frm, available_services) {
 	frm.render_available_services(dialog, headers, available_services);
 
 	dialog.$body.on('click', '.btn', function() {
-		let service_type = $(this).attr("data-type");
+		// let service_type = $(this).attr("data-type");
 		let service_index = cint($(this).attr("id").split("-")[2]);
-		let service_data = available_services[service_type][service_index];
+		let service_data = available_services[service_index];
 		frm.select_row(service_data);
 	});
 
