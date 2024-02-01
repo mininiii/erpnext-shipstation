@@ -103,7 +103,7 @@ class ShipStationUtils():
         #    return []
 
         # self.set_shipstation_specific_fields(pickup_contact, delivery_contact)
-        # pickup_address.address_title = self.trim_address(pickup_address)
+        # pickup_address.x = self.trim_address(pickup_address)
         # delivery_address.address_title = self.trim_address(delivery_address)
         # parcel_list = self.get_parcel_list(json.loads(shipment_parcel), description_of_content)
 
@@ -211,6 +211,8 @@ class ShipStationUtils():
 
             list_shipments_url = f'{BASE_URL}/shipments'
 
+            frappe.db.get_value('ShipStation', 'ShipStation', ['api_id', 'enabled'])
+
             # if 'shipmentId' in response_data:
             #    shipment_amount = response_data['service']['priceInfo']['totalPrice']
             #    awb_number = ''
@@ -233,6 +235,7 @@ class ShipStationUtils():
             #    frappe.throw(_('An Error occurred while creating Shipment: {0}')
                 # .format(response_data['message']))
 
+            
         except Exception as e:
             print(f"에러 발생: {e}")
 
