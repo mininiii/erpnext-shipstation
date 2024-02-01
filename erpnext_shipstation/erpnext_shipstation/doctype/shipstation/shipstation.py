@@ -121,7 +121,7 @@ class ShipStationUtils():
         service_code = "usps_first_class_mail"
         package_code = "package"
         confirmation = "delivery"
-        shipDate = datetime.now().isoformat()
+        ship_date = datetime.now().isoformat()
         weight = {
             "value": 3,
             "units": "ounces"
@@ -158,10 +158,10 @@ class ShipStationUtils():
             "phone": None,
             "residential": False
         }
-        insuranceOptions = None
+        insurance_options = None
         internationalOptions = None
-        advancedOptions = None
-        testLabel = True
+        advanced_options = None
+        test_label = True
 
         body = {
             "carrierCode": carrier_code,
@@ -210,7 +210,15 @@ class ShipStationUtils():
                 pdf_file.write(pdf_bytes)
 
             list_shipments_url = f'{BASE_URL}/shipments'
+            list_response_response = requests.post(
+                url=list_shipments_url,
+                auth=(self.api_id, self.api_password),
+                headers=headers,
+                data=json.dumps(body)
+            )
 
+            print(list_response_response)
+            
             # if 'shipmentId' in response_data:
             #    shipment_amount = response_data['service']['priceInfo']['totalPrice']
             #    awb_number = ''
