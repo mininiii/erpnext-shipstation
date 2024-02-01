@@ -107,14 +107,9 @@ class ShipStationUtils():
         # parcel_list = self.get_parcel_list(json.loads(shipment_parcel), description_of_content)
 
         create_shipment_url = f'{BASE_URL}/shipments/createlabel'
-
-        # 사용자 이름과 비밀번호
-        # 여기에 api key랑 api secret 넣어서 실행하시면 됩니당
-        username=self.api_id
-        password=self.api_password
-
+        
         # Basic Authentication 헤더 생성
-        auth_header = base64.b64encode(f"{username}:{password}".encode("utf-8")).decode("utf-8")
+        auth_header = base64.b64encode(f"{self.api_id}:{self.api_password}".encode("utf-8")).decode("utf-8")
         headers = {
             "Authorization": f"Basic {auth_header}",
             "Content-Type": "application/json"
