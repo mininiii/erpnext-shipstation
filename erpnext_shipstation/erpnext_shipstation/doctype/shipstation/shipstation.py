@@ -114,7 +114,6 @@ class ShipStationUtils():
         headers = {
             "Authorization": f"Basic {auth_header}",
             "Content-Type": "application/json"
-
         }
 
         # Create Shipment에 넣은 하드코딩 정보
@@ -185,7 +184,7 @@ class ShipStationUtils():
         try:
             response_data = requests.post(
                 url=create_shipment_url,
-                auth=("57267da19f264928892b464ec0290748", "48f594033ae54a9fb8b340bd1a3d93f7"),
+                auth=(self.api_id, self.api_password),
                 headers=headers,
                 data=json.dumps(body)
             )
