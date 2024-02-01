@@ -16,53 +16,6 @@ from erpnext_shipstation.erpnext_shipstation.utils import show_error_alert
 SHIPSTATION_PROVIDER = 'ShipStation'
 BASE_URL = 'https://ssapi.shipstation.com'
 
-# Create Shipment에 넣은 하드코딩 정보
-carrier_code = "stamps_com"
-service_code = "usps_first_class_mail"
-package_code = "package"
-confirmation = "delivery"
-shipDate = datetime.now().isoformat()
-weight = {
-   "value": 3,
-   "units": "ounces"
-}
-dimensions = {
-   "units": "inches",
-   "length": 7,
-   "width": 5,
-   "height": 6
-}
-ship_from = {
-   "name": "Jason Hodges",
-   "company": "ShipStation",
-   "street1": "2815 Exposition Blvd",
-   "street2": "Ste 2353242",
-   "street3": None,
-   "city": "Austin",
-   "state": "TX",
-   "postalCode": "78703",
-   "country": "US",
-   "phone": "+1",
-   "residential": False
-}
-ship_to = {
-   "name": "The President",
-   "company": "US Govt",
-   "street1": "1600 Pennsylvania Ave",
-   "street2": "Oval Office",
-   "street3": None,
-   "city": "Washington",
-   "state": "DC",
-   "postalCode": "20500",
-   "country": "US",
-   "phone": None,
-   "residential": False
-}
-insuranceOptions = None
-internationalOptions = None
-advancedOptions = None
-testLabel = True
-
 
 class ShipStation(Document): pass
 
@@ -184,6 +137,53 @@ class ShipStationUtils():
          "Content-Type": "application/json"
 
       }
+
+      # Create Shipment에 넣은 하드코딩 정보
+      carrier_code = "stamps_com"
+      service_code = "usps_first_class_mail"
+      package_code = "package"
+      confirmation = "delivery"
+      shipDate = datetime.now().isoformat()
+      weight = {
+         "value": 3,
+         "units": "ounces"
+      }
+      dimensions = {
+         "units": "inches",
+         "length": 7,
+         "width": 5,
+         "height": 6
+      }
+      ship_from = {
+         "name": "Jason Hodges",
+         "company": "ShipStation",
+         "street1": "2815 Exposition Blvd",
+         "street2": "Ste 2353242",
+         "street3": None,
+         "city": "Austin",
+         "state": "TX",
+         "postalCode": "78703",
+         "country": "US",
+         "phone": "+1",
+         "residential": False
+      }
+      ship_to = {
+         "name": "The President",
+         "company": "US Govt",
+         "street1": "1600 Pennsylvania Ave",
+         "street2": "Oval Office",
+         "street3": None,
+         "city": "Washington",
+         "state": "DC",
+         "postalCode": "20500",
+         "country": "US",
+         "phone": None,
+         "residential": False
+      }
+      insuranceOptions = None
+      internationalOptions = None
+      advancedOptions = None
+      testLabel = True
 
       body = {
          "carrierCode": carrier_code,
