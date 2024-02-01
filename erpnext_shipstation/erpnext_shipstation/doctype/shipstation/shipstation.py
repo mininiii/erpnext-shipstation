@@ -3,6 +3,7 @@
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
+import base64
 import requests
 import frappe
 import json
@@ -94,125 +95,155 @@ class ShipStationUtils():
 
 		return []
 
+    def create_shipment(carrier_code, service_code, package_code, confirmation, ship_date, weight, 
+                   dimensions, ship_from, ship_to, insurance_options, internationalOptions,
+                   advanced_options, test_label):
+    # Create a transaction at ShipStation
+    # if not self.enabled or not self.api_id or not self.api_password:
+    #    return []
 
-	def create_shipment(self, pickup_address, delivery_address, shipment_parcel, description_of_content,
-		pickup_date, value_of_goods, service_info, pickup_contact=None, delivery_contact=None):
-		# Create a transaction at ShipStation
-		if not self.enabled or not self.api_id or not self.api_password:
-			return []
+    # self.set_shipstation_specific_fields(pickup_contact, delivery_contact)
+    # pickup_address.address_title = self.trim_address(pickup_address)
+    # delivery_address.address_title = self.trim_address(delivery_address)
+    # parcel_list = self.get_parcel_list(json.loads(shipment_parcel), description_of_content)
 
-		self.set_shipstation_specific_fields(pickup_contact, delivery_contact)
-		pickup_address.address_title = self.trim_address(pickup_address)
-		delivery_address.address_title = self.trim_address(delivery_address)
-		parcel_list = self.get_parcel_list(json.loads(shipment_parcel), description_of_content)
+    create_shipment_url = f'{BASE_URL}/shipments/createlabel'
 
-		url = BASE_URL + '/shipments/createlabel'
-		headers = {
-			'Content-Type': 'application/json',
-			'Accept': 'application/json',
-			'Access-Control-Allow-Origin': 'string'
-		}
-		payload = {
-			"carrierCode": "stamps_com",
-			"serviceCode": "usps_first_class_mail",
-			"packageCode": "package",
-			"confirmation": "delivery",
-			"shipDate": "2024-01-20",
-			"weight": {
-				"value": 3,
-				"units": "ounces"
-			},
-			"dimensions": {
-				"units": "inches",
-				"length": 7,
-				"width": 5,
-				"height": 6
-			},
-			"shipFrom": {
-				"name": "Jason Hodges",
-				"company": "ShipStation",
-				"street1": "2815 Exposition Blvd",
-				"street2": "Ste 2353242",
-				"street3": null,
-				"city": "Austin",
-				"state": "TX",
-				"postalCode": "78703",
-				"country": "US",
-				"phone": null,
-				"residential": false
-			},
-			"shipTo": {
-				"name": "The President",
-				"company": "US Govt",
-				"street1": "1600 Pennsylvania Ave",
-				"street2": "Oval Office",
-				"street3": null,
-				"city": "Washington",
-				"state": "DC",
-				"postalCode": "20500",
-				"country": "US",
-				"phone": null,
-				"residential": false
-			},
-			"insuranceOptions": null,
-			"internationalOptions": null,
-			"advancedOptions": null,
-			"testLabel": true
-			}
-		{
-			"carrierCode": CARRIER_CODE,
-			"serviceCode": None,
-			"packageCode": None,
-			"fromPostalCode": pickup_address.pincode,
-			"toState": delivery_address.state,
-			"toCountry": delivery_address.country_code,
-			"toPostalCode": delivery_address.pincode,
-			"toCity": delivery_address.city,
-			"weight": {
-				"value": parcel_list[0]["weight"] * 1000,
-				"units": "grams"
-			},
-			"dimensions": {
-				"units": "centimeters",
-				"length": parcel_list[0]["length"],
-				"width": parcel_list[0]["width"],
-				"height": parcel_list[0]["height"]
-			},
-			"confirmation": "delivery",
-			"residential": delivery_to_type == 'Company'
-			}
-		try:
-			response_data = requests.post(
-				url=url,
-				auth=(self.api_id, self.api_password),
-				headers=headers,
-				data=json.dumps(payload)
-			)
-			response_data = json.loads(response_data.text)
-			if 'shipmentId' in response_data:
-				shipment_amount = response_data['service']['priceInfo']['totalPrice']
-				awb_number = ''
-				url = 'https://api.letmeship.com/v1/shipments/{id}'.format(id=response_data['shipmentId'])
-				tracking_response = requests.get(url, auth=(self.api_id, self.api_password),headers=headers)
-				tracking_response_data = json.loads(tracking_response.text)
-				if 'trackingData' in tracking_response_data:
-					for parcel in tracking_response_data['trackingData']['parcelList']:
-						if 'awbNumber' in parcel:
-							awb_number = parcel['awbNumber']
-				return {
-					'service_provider': SHIPSTATION_PROVIDER,
-					'shipment_id': response_data['shipmentId'],
-					'carrier': service_info['carrier'],
-					'carrier_service': service_info['service_name'],
-					'shipment_amount': shipment_amount,
-					'awb_number': awb_number,
-				}
-			elif 'message' in response_data:
-				frappe.throw(_('An Error occurred while creating Shipment: {0}')
-					.format(response_data['message']))
-		except Exception:
-			show_error_alert("creating ShipStation Shipment")
+    # 사용자 이름과 비밀번호
+    # 여기에 api key랑 api secret 넣어서 실행하시면 됩니당
+    # username=
+    # password=
 
+    # Basic Authentication 헤더 생성
+    auth_header = base64.b64encode(f"{username}:{password}".encode("utf-8")).decode("utf-8")
+    headers = {
+       "Authorization": f"Basic {auth_header}",
+       "Content-Type": "application/json"
+
+    }
+
+    # Create Shipment에 넣은 하드코딩 정보
+    carrier_code = "stamps_com"
+    service_code = "usps_first_class_mail"
+    package_code = "package"
+    confirmation = "delivery"
+    shipDate = datetime.now().isoformat()
+    weight = {
+       "value": 3,
+       "units": "ounces"
+    }
+    dimensions = {
+       "units": "inches",
+       "length": 7,
+       "width": 5,
+       "height": 6
+    }
+    ship_from = {
+       "name": "Jason Hodges",
+       "company": "ShipStation",
+       "street1": "2815 Exposition Blvd",
+       "street2": "Ste 2353242",
+       "street3": None,
+       "city": "Austin",
+       "state": "TX",
+       "postalCode": "78703",
+       "country": "US",
+       "phone": "+1",
+       "residential": False
+    }
+    ship_to = {
+       "name": "The President",
+       "company": "US Govt",
+       "street1": "1600 Pennsylvania Ave",
+       "street2": "Oval Office",
+       "street3": None,
+       "city": "Washington",
+       "state": "DC",
+       "postalCode": "20500",
+       "country": "US",
+       "phone": None,
+       "residential": False
+    }
+    insuranceOptions = None
+    internationalOptions = None
+    advancedOptions = None
+    testLabel = True
+
+    body = {
+       "carrierCode": carrier_code,
+       "serviceCode": service_code,
+       "packageCode": package_code,
+       "confirmation": confirmation,
+       "shipDate": ship_date,
+       "weight": weight,
+       "dimensions": dimensions,
+       "shipFrom": ship_from,
+       "shipTo": ship_to,
+       "insuranceOptions": insurance_options,
+       "internationalOptions": internationalOptions,
+       "advancedOptions": advanced_options,
+       "testLabel": test_label
+    }
+
+    # print(body)
+
+    try:
+       response_data = requests.post(
+          url=create_shipment_url,
+          auth=("57267da19f264928892b464ec0290748", "48f594033ae54a9fb8b340bd1a3d93f7"),
+          headers=headers,
+          data=json.dumps(body)
+       )
+
+       # print("보내는 거까지 됐다")
+
+       response_data = json.loads(response_data.text)
+       # print(response_data)
+
+       order_id = response_data['orderId']
+       print('orderId: {}'.format(order_id))
+
+       tracking_num = response_data['trackingNumber']
+       print('trackingNumber: {}'.format(tracking_num))
+
+       label_data = response_data['labelData']
+       print('labelData: {}'.format(label_data))
+
+       # 라벨 PDF로 뽑기
+       # base64 디코딩
+       pdf_bytes = base64.b64decode(label_data)
+
+       # PDF 파일로 저장
+       with open("LabelPDF.pdf", "wb") as pdf_file:
+          pdf_file.write(pdf_bytes)
+
+       list_shipments_url = f'{BASE_URL}/shipments'
+
+       # if 'shipmentId' in response_data:
+       #    shipment_amount = response_data['service']['priceInfo']['totalPrice']
+       #    awb_number = ''
+       #    url = 'https://api.letmeship.com/v1/shipments/{id}'.format(id=response_data['shipmentId'])
+       #    tracking_response = requests.get(url, auth=(self.api_id, self.api_password),headers=headers)
+       #    tracking_response_data = json.loads(tracking_response.text)
+       #    if 'trackingData' in tracking_response_data:
+       #       for parcel in tracking_response_data['trackingData']['parcelList']:
+       #          if 'awbNumber' in parcel:
+       #             awb_number = parcel['awbNumber']
+       #    return {
+       #       'service_provider': SHIPSTATION_PROVIDER,
+       #       'shipment_id': response_data['shipmentId'],
+       #       'carrier': service_info['carrier'],
+       #       'carrier_service': service_info['service_name'],
+       #       'shipment_amount': shipment_amount,
+       #       'awb_number': awb_number,
+       #    }
+       # elif 'message' in response_data:
+       #    frappe.throw(_('An Error occurred while creating Shipment: {0}')
+             # .format(response_data['message']))
+
+    except Exception as e:
+       print(f"에러 발생: {e}")
+       
 	def get_label(self, shipment_id):
 		# Retrieve shipment label from ShipStation
 		try:
