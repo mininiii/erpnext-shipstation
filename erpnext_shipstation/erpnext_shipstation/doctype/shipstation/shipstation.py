@@ -95,20 +95,21 @@ class ShipStationUtils():
 
         return []
 
-    def create_shipment(self, carrier_code, service_code, package_code, confirmation, ship_date, weight, 
-                    dimensions, ship_from, ship_to, insurance_options, internationalOptions,
-                    advanced_options, test_label):
+    def create_shipment(self, pickup_address, delivery_address, shipment_parcel, description_of_content,
+		pickup_date, value_of_goods, service_info, pickup_contact=None, delivery_contact=None):
         # Create a transaction at ShipStation
-        # if not self.enabled or not self.api_id or not self.api_password:
-        #    return []
+        if not self.enabled or not self.api_id or not self.api_password:
+            return []
+      
+        self.set_shipstation_specific_fields(pickup_contact, delivery_contact)
+        pickup_address.address_title = self.trim_address(pickup_address)
+        delivery_address.address_title = self.trim_address(delivery_address)
+        parcel_list = self.get_parcel_list(json.loads(shipment_parcel), description_of_content)
+        url = f'{BASE_URL}/shipments/createlabel'
 
-        # self.set_shipstation_specific_fields(pickup_contact, delivery_contact)
-        # pickup_address.address_title = self.trim_address(pickup_address)
-        # delivery_address.address_title = self.trim_address(delivery_address)
-        # parcel_list = self.get_parcel_list(json.loads(shipment_parcel), description_of_content)
+        ship_from_info = self.get_pickup_delivery_info(pickup_address, pickup_contact)
+        ship_to_info = self.get_pickup_delivery_info(delivery_address, delivery_contact)
 
-        create_shipment_url = f'{BASE_URL}/shipments/createlabel'
-        
         # Basic Authentication 헤더 생성
         auth_header = base64.b64encode(f"{self.api_id}:{self.api_password}".encode("utf-8")).decode("utf-8")
         headers = {
@@ -116,48 +117,49 @@ class ShipStationUtils():
             "Content-Type": "application/json"
         }
 
-        # Create Shipment에 넣은 하드코딩 정보
-        carrier_code = "stamps_com"
-        service_code = "usps_first_class_mail"
+        carrier_code = CARRIER_CODE
+        service_code = service_info["service_code"]
         package_code = "package"
         confirmation = "delivery"
-        ship_date = datetime.now().isoformat()
+        ship_date = pickup_date
         weight = {
-            "value": 3,
-            "units": "ounces"
+            "value": parcel_list[0]["weight"] * 1000,
+            "units": "grams"
         }
         dimensions = {
-            "units": "inches",
-            "length": 7,
-            "width": 5,
-            "height": 6
+            "units": "centimeters",
+            "length": parcel_list[0]["length"],
+            "width": parcel_list[0]["width"],
+            "height": parcel_list[0]["height"]
         }
+
         ship_from = {
-            "name": "Jason Hodges",
-            "company": "ShipStation",
-            "street1": "2815 Exposition Blvd",
-            "street2": "Ste 2353242",
+            "name": ship_from_info["person"]["firstname"] + " " + ship_from_info["person"]["lastname"],
+            "company": ship_from_info["company"],
+            "street1": ship_from_info["address"]["street"],
+            "street2": ship_from_info["address"]["addressInfo1"],
             "street3": None,
-            "city": "Austin",
-            "state": "TX",
-            "postalCode": "78703",
-            "country": "US",
-            "phone": "+1",
+            "city": ship_from_info["address"]["city"],
+            "state": pickup_address["state"],
+            "postalCode": ship_from_info["address"]["zip"],
+            "country": ship_from_info["address"]["countryCode"],
+            "phone": ship_from_info["phone"]["phoneNumberPrefix"] + " " + ship_from_info["phone"]["phoneNumber"],
             "residential": False
         }
         ship_to = {
-            "name": "The President",
-            "company": "US Govt",
-            "street1": "1600 Pennsylvania Ave",
-            "street2": "Oval Office",
+            "name": ship_to_info["person"]["firstname"] + " " + ship_to_info["person"]["lastname"],
+            "company": ship_to_info["company"],
+            "street1": ship_to_info["address"]["street"],
+            "street2": ship_to_info["address"]["addressInfo1"],
             "street3": None,
-            "city": "Washington",
-            "state": "DC",
-            "postalCode": "20500",
-            "country": "US",
-            "phone": None,
+            "city": ship_to_info["address"]["city"],
+            "state": delivery_address["state"],
+            "postalCode": ship_to_info["address"]["zip"],
+            "country": ship_to_info["address"]["countryCode"],
+            "phone": ship_to_info["phone"]["phoneNumberPrefix"] + " " + ship_to_info["phone"]["phoneNumber"],
             "residential": False
         }
+
         insurance_options = None
         internationalOptions = None
         advanced_options = None
@@ -179,11 +181,9 @@ class ShipStationUtils():
             "testLabel": test_label
         }
 
-        # print(body)
-
         try:
             response_data = requests.post(
-                url=create_shipment_url,
+                url=url,
                 auth=(self.api_id, self.api_password),
                 headers=headers,
                 data=json.dumps(body)
@@ -191,52 +191,25 @@ class ShipStationUtils():
 
             response_data = json.loads(response_data.text)
             # print(response_data)
-
-            order_id = response_data['orderId']
-            tracking_num = response_data['trackingNumber']
-            label_data = response_data['labelData']
-
-            # print('orderId: {}'.format(order_id))
-            # print('trackingNumber: {}'.format(tracking_num))
-            # print('labelData: {}'.format(label_data))
-
-            # 라벨 PDF로 뽑기
-            pdf_bytes = base64.b64decode(label_data)  # base64 디코딩
-            with open("LabelPDF.pdf", "wb") as pdf_file:  # PDF 파일로 저장
-                pdf_file.write(pdf_bytes)
-
-            orderId = 2
-            # orderId로 shipments 리스트를 불러옴
-            list_shipments_url = f'{BASE_URL}/shipments?orderId={orderId}'
-            list_response_response = requests.get(
-                url=list_shipments_url,
-                auth={self.api_id, self.api_password}
-            )
-
-            list_response_data = json.loads(list_response_response.text)
-            print(list_response_data)
             
-            # if 'shipmentId' in response_data:
-            #    shipment_amount = response_data['service']['priceInfo']['totalPrice']
-            #    awb_number = ''
-            #    url = 'https://api.letmeship.com/v1/shipments/{id}'.format(id=response_data['shipmentId'])
-            #    tracking_response = requests.get(url, auth=(self.api_id, self.api_password),headers=headers)
-            #    tracking_response_data = json.loads(tracking_response.text)
-            #    if 'trackingData' in tracking_response_data:
-            #       for parcel in tracking_response_data['trackingData']['parcelList']:
-            #          if 'awbNumber' in parcel:
-            #             awb_number = parcel['awbNumber']
-            #    return {
-            #       'service_provider': SHIPSTATION_PROVIDER,
-            #       'shipment_id': response_data['shipmentId'],
-            #       'carrier': service_info['carrier'],
-            #       'carrier_service': service_info['service_name'],
-            #       'shipment_amount': shipment_amount,
-            #       'awb_number': awb_number,
-            #    }
-            # elif 'message' in response_data:
-            #    frappe.throw(_('An Error occurred while creating Shipment: {0}')
-                # .format(response_data['message']))
+            if 'shipmentId' in response_data:
+                awb_number = ''
+                tracking_response_data = response_data["trackingNumber"]
+                if 'trackingData' in tracking_response_data:
+                   for parcel in tracking_response_data['trackingData']['parcelList']:
+                      if 'awbNumber' in parcel:
+                         awb_number = parcel['awbNumber']
+                return {
+                  'service_provider': SHIPSTATION_PROVIDER,
+                  'shipment_id': response_data['shipmentId'],
+                  'carrier': carrier_code,
+                  'carrier_service': service_code,
+                  'shipment_amount': response_data["shipmentCost"],
+                  'awb_number': awb_number,
+               }
+            elif 'Message' in response_data:
+                frappe.throw(_('An Error occurred while creating Shipment: {0}')
+                 .format(response_data['ExceptionMessage']))
 
         except Exception as e:
             print(f"에러 발생: {e}")

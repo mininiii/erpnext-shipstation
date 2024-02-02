@@ -123,7 +123,7 @@ def create_shipment(shipment, pickup_from_type, delivery_to_type, pickup_address
 		delivery_contact = get_contact(delivery_contact_name)
 	else:
 		delivery_contact = get_company_contact(user=pickup_contact_name)
-
+  
 	if service_info['service_provider'] == LETMESHIP_PROVIDER:
 		letmeship = LetMeShipUtils()
 		shipment_info = letmeship.create_shipment(
@@ -239,10 +239,11 @@ def update_delivery_note(delivery_notes, shipment_info=None, tracking_info=None)
 
 	for delivery_note in delivery_notes:
 		dl_doc = frappe.get_doc('Delivery Note', delivery_note)
-		if shipment_info:
-			dl_doc.db_set('delivery_type', 'Parcel Service')
-			dl_doc.db_set('parcel_service', shipment_info.get('carrier'))
-			dl_doc.db_set('parcel_service_type', shipment_info.get('carrier_service'))
+		# TODO: check
+		# if shipment_info:
+		# 	dl_doc.db_set('delivery_type', 'Parcel Service')
+		# 	dl_doc.db_set('parcel_service', shipment_info.get('carrier'))
+		# 	dl_doc.db_set('parcel_service_type', shipment_info.get('carrier_service'))
 		if tracking_info:
 			dl_doc.db_set('tracking_number', tracking_info.get('awb_number'))
 			dl_doc.db_set('tracking_url', tracking_info.get('tracking_url'))
