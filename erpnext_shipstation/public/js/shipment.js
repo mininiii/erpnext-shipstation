@@ -199,7 +199,7 @@ function select_from_available_services(frm, available_services) {
 				delivery_contact_name: frm.doc.delivery_contact_name,
 				value_of_goods: frm.doc.value_of_goods,
 				service_data: service_data,
-				delivery_notes: delivery_notes
+				delivery_notes: delivery_notes,
 			},
 			callback: function(r) {
 				if (!r.exc) {
