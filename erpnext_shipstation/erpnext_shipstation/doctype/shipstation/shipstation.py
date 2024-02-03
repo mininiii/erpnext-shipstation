@@ -5,7 +5,7 @@
 from __future__ import unicode_literals
 import base64
 import datetime
-import requests
+from datetime import requests
 import frappe
 import json
 import re
@@ -210,8 +210,7 @@ class ShipStationUtils():
             list_shipments_url = f'{BASE_URL}/shipments?orderId={orderId}'
             list_response_response = requests.get(
                 url=list_shipments_url,
-                auth={self.api_id, self.api_password}
-            )
+                auth={self.api_id, self.api_password})
 
             list_response_data = json.loads(list_response_response.text)
             print(list_response_data)
