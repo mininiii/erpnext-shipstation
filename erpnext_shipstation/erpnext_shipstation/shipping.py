@@ -206,6 +206,12 @@ def print_shipping_label(service_provider, shipment_id):
 
 @frappe.whitelist()
 def update_tracking(shipment, service_provider, shipment_id, delivery_notes=[]):
+	if service_provider == SHIPSTATION_PROVIDER:
+		shipstation = ShipStationUtils()
+		tracking_data = shipstation.get_tracking_data(shipment_id)
+		return tracking_data
+
+def update_tracking_1(shipment, service_provider, shipment_id, delivery_notes=[]):
 	# Update Tracking info in Shipment
 	tracking_data = None
 	if service_provider == LETMESHIP_PROVIDER:
@@ -219,7 +225,7 @@ def update_tracking(shipment, service_provider, shipment_id, delivery_notes=[]):
 		tracking_data = sendcloud.get_tracking_data(shipment_id)
 	elif service_provider == SHIPSTATION_PROVIDER:
 		shipstation = ShipStationUtils()
-		tracking_data = sendcloud.get_tracking_data(shipment_id)
+		tracking_data = shipstation.get_tracking_data(shipment_id)
 
 	if tracking_data:
 		fields = ['awb_number', 'tracking_status', 'tracking_status_info', 'tracking_url']

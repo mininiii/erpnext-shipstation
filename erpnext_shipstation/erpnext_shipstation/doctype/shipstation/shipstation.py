@@ -240,44 +240,47 @@ class ShipStationUtils():
             show_error_alert("printing LetMeShip Label")
 
     def get_tracking_data(self, shipment_id):
-        from erpnext_shipstation.erpnext_shipstation.utils import get_tracking_url
-        # return letmeship tracking data
-        headers = {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Access-Control-Allow-Origin': 'string'
-        }
-        try:
-            url = 'https://api.letmeship.com/v1/tracking?shipmentid={id}'.format(id=shipment_id)
-            tracking_data_response = requests.get(
-                url,
-                auth=(self.api_id, self.api_password),
-                headers=headers
-            )
-            tracking_data = json.loads(tracking_data_response.text)
-            if 'awbNumber' in tracking_data:
-                tracking_status = 'In Progress'
-                if tracking_data['lmsTrackingStatus'].startswith('DELIVERED'):
-                    tracking_status = 'Delivered'
-                if tracking_data['lmsTrackingStatus'] == 'RETURNED':
-                    tracking_status = 'Returned'
-                if tracking_data['lmsTrackingStatus'] == 'LOST':
-                    tracking_status = 'Lost'
-                tracking_url = get_tracking_url(
-                    carrier=tracking_data['carrier'],
-                    tracking_number=tracking_data['awbNumber']
-                )
-                return {
-                    'awb_number': tracking_data['awbNumber'],
-                    'tracking_status': tracking_status,
-                    'tracking_status_info': tracking_data['lmsTrackingStatus'],
-                    'tracking_url': tracking_url,
-                }
-            elif 'message' in tracking_data:
-                frappe.throw(_('Error occurred while updating Shipment: {0}')
-                    .format(tracking_data['message']))
-        except Exception:
-            show_error_alert("updating LetMeShip Shipment")
+        tracking_number = frappe.db.get_value('Shipstation Label', shipment_id, ['tracking_number'])
+        return tracking_number
+    # def get_tracking_data(self, shipment_id):
+    #     from erpnext_shipstation.erpnext_shipstation.utils import get_tracking_url
+    #     # return letmeship tracking data
+    #     headers = {
+    #         'Content-Type': 'application/json',
+    #         'Accept': 'application/json',
+    #         'Access-Control-Allow-Origin': 'string'
+    #     }
+    #     try:
+    #         url = 'https://api.letmeship.com/v1/tracking?shipmentid={id}'.format(id=shipment_id)
+    #         tracking_data_response = requests.get(
+    #             url,
+    #             auth=(self.api_id, self.api_password),
+    #             headers=headers
+    #         )
+    #         tracking_data = json.loads(tracking_data_response.text)
+    #         if 'awbNumber' in tracking_data:
+    #             tracking_status = 'In Progress'
+    #             if tracking_data['lmsTrackingStatus'].startswith('DELIVERED'):
+    #                 tracking_status = 'Delivered'
+    #             if tracking_data['lmsTrackingStatus'] == 'RETURNED':
+    #                 tracking_status = 'Returned'
+    #             if tracking_data['lmsTrackingStatus'] == 'LOST':
+    #                 tracking_status = 'Lost'
+    #             tracking_url = get_tracking_url(
+    #                 carrier=tracking_data['carrier'],
+    #                 tracking_number=tracking_data['awbNumber']
+    #             )
+    #             return {
+    #                 'awb_number': tracking_data['awbNumber'],
+    #                 'tracking_status': tracking_status,
+    #                 'tracking_status_info': tracking_data['lmsTrackingStatus'],
+    #                 'tracking_url': tracking_url,
+    #             }
+    #         elif 'message' in tracking_data:
+    #             frappe.throw(_('Error occurred while updating Shipment: {0}')
+    #                 .format(tracking_data['message']))
+    #     except Exception:
+    #         show_error_alert("updating LetMeShip Shipment")
 
     def generate_payload(self, pickup_address, pickup_contact, delivery_address, delivery_contact,
         description_of_content, value_of_goods, parcel_list, pickup_date, service_info=None):

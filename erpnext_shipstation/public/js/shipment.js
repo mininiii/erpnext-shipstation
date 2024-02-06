@@ -99,6 +99,7 @@ frappe.ui.form.on('Shipment', {
 		(frm.doc.shipment_delivery_note || []).forEach((d) => {
 			delivery_notes.push(d.delivery_note);
 		});
+		
 		frappe.call({
 			method: "erpnext_shipstation.erpnext_shipstation.shipping.update_tracking",
 			freeze: true,
@@ -110,8 +111,15 @@ frappe.ui.form.on('Shipment', {
 				delivery_notes: delivery_notes
 			},
 			callback: function(r) {
-				if (!r.exc) {
-					frm.reload_doc();
+				if (r.message) {
+					
+					// URL 변수를 추출합니다.
+					let tracking_number = r.message;
+					// 추적 번호를 URL에 삽입합니다.
+					let url = `https://tools.usps.com/go/TrackConfirmAction?tRef=fullpage&tLc=2&text28777=&tLabels=${tracking_number}%2C&tABt=true`;
+				
+					// 작은 창으로 열기 위한 JavaScript 코드입니다.
+					window.open(url, "_blank", "width=600,height=400");
 				}
 			}
 		});
@@ -205,7 +213,7 @@ function select_from_available_services(frm, available_services) {
 				if (!r.exc) {
 					frm.reload_doc();
 					frappe.msgprint({
-							message: __("Shipment {1} has been created with {0}.", [r.message.service_provider, r.message.shipment_id.bold()]),
+							message: __("Shipment {1} has been created with {0}.", [r.message.service_provider, r.message.shipment_id]),
 							title: __("Shipment Created"),
 							indicator: "green"
 						});
