@@ -257,59 +257,6 @@ class ShipStationUtils():
         label_data = frappe.db.get_value('Shipstation Label', shipment_id, ['label_data'])
         return label_data
 
-    def generate_payload(self, pickup_address, pickup_contact, delivery_address, delivery_contact,
-        description_of_content, value_of_goods, parcel_list, pickup_date, service_info=None):
-        payload = {
-            'pickupInfo': self.get_pickup_delivery_info(pickup_address, pickup_contact),
-            'deliveryInfo': self.get_pickup_delivery_info(delivery_address, delivery_contact),
-            'shipmentDetails': {
-                'contentDescription': description_of_content,
-                'shipmentType': 'PARCEL',
-                'shipmentSettings': {
-                    'saturdayDelivery': False,
-                    'ddp': False,
-                    'insurance': False,
-                    'pickupOrder': False,
-                    'pickupTailLift': False,
-                    'deliveryTailLift': False,
-                    'holidayDelivery': False,
-                },
-                'goodsValue': value_of_goods,
-                'parcelList': parcel_list,
-                'pickupInterval': {
-                    'date': pickup_date
-                }
-            }
-        }
-
-        if service_info:
-            payload['service'] = {
-                'baseServiceDetails': {
-                    'id': service_info['id'],
-                    'name': service_info['service_name'],
-                    'carrier': service_info['carrier'],
-                    'priceInfo': service_info['price_info'],
-                },
-                'supportedExWorkType': [],
-                'messages': [''],
-                'description': '',
-                'serviceInfo': '',
-            }
-            payload['shipmentNotification'] = {
-                'trackingNotification': {
-                    'deliveryNotification': True,
-                    'problemNotification': True,
-                    'emails': [],
-                    'notificationText': '',
-                },
-                'recipientNotification': {
-                    'notificationText': '',
-                    'emails': []
-                }
-            }
-            payload['labelEmail'] = True
-        return payload
-
     def trim_address(self, address):
         # LetMeShip has a limit of 30 characters for Company field
         if len(address.address_title) > 30:

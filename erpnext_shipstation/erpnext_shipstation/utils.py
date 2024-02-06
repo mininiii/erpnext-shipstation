@@ -5,14 +5,6 @@ from __future__ import unicode_literals
 import frappe
 from frappe import _
 
-def get_tracking_url(carrier, tracking_number):
-	# Return the formatted Tracking URL.
-	tracking_url = ''
-	url_reference = frappe.get_value('Parcel Service', carrier, 'url_reference')
-	if url_reference:
-		tracking_url = frappe.render_template(url_reference, {'tracking_number': tracking_number})
-	return tracking_url
-
 def get_address(address_name):
 	fields = ['address_title', 'address_line1', 'address_line2', 'city', 'pincode', 'country', 'state']
 	address = frappe.db.get_value('Address', address_name, fields, as_dict=1)
