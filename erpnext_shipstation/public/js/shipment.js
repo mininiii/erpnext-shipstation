@@ -75,13 +75,24 @@ frappe.ui.form.on('Shipment', {
 			},
 			callback: function(r) {
 				if (r.message) {
-					if (frm.doc.service_provider == "LetMeShip") {
-						var array = JSON.parse(r.message);
-						// Uint8Array for unsigned bytes
-						array = new Uint8Array(array);
-						const file = new Blob([array], {type: "application/pdf"});
-						const file_url = URL.createObjectURL(file);
-						window.open(file_url);
+					if (frm.doc.service_provider == "ShipStation") {
+						var array = base64ToArrayBuffer(r.message); // base64를 ArrayBuffer로 변환
+
+						const file = new Blob([array], {type: "application/pdf"}); // Blob 객체로 변환
+
+						const file_url = URL.createObjectURL(file); // Blob 객체의 URL 생성
+
+						window.open(file_url); // 새 창을 열어 PDF 파일 표시
+
+						function base64ToArrayBuffer(base64) {
+							var binary_string = window.atob(base64);
+							var len = binary_string.length;
+							var bytes = new Uint8Array(len);
+							for (var i = 0; i < len; i++) {
+								bytes[i] = binary_string.charCodeAt(i);
+							}
+							return bytes.buffer;
+}
 					}
 					else {
 						if (Array.isArray(r.message)) {
