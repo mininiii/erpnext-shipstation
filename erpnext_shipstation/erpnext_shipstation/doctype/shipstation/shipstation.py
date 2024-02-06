@@ -249,10 +249,13 @@ class ShipStationUtils():
             print(f"에러 발생: {e}")
 
 
-
     def get_tracking_data(self, shipment_id):
         tracking_number = frappe.db.get_value('Shipstation Label', shipment_id, ['tracking_number'])
         return tracking_number
+    
+    def get_label(self, shipment_id):
+        label_data = frappe.db.get_value('Shipstation Label', shipment_id, ['label_data'])
+        return label_data
 
     def generate_payload(self, pickup_address, pickup_contact, delivery_address, delivery_contact,
         description_of_content, value_of_goods, parcel_list, pickup_date, service_info=None):
@@ -316,17 +319,6 @@ class ShipStationUtils():
     def get_service_dict(self, response):
         """Returns a dictionary with service info."""
         available_service = frappe._dict()
-        # basic_info = response['baseServiceDetails']
-        # price_info = basic_info['priceInfo']
-        # available_service.service_provider = SHIPSTATION_PROVIDER
-        # available_service.id = basic_info['id']
-        # available_service.carrier = basic_info['carrier']
-        # available_service.carrier_name = basic_info['name']
-        # available_service.service_name = ''
-        # available_service.is_preferred = 0
-        # available_service.real_weight = price_info['realWeight']
-        # available_service.total_price = price_info['netPrice']
-        # available_service.price_info = price_info
         available_service.service_provider = SHIPSTATION_PROVIDER
         available_service.service_code = response['serviceCode']
         available_service.servicename = response['serviceName']
