@@ -1,12 +1,10 @@
 ## ERPNext Shipping
 
-A Shipping Integration for ERPNext with various platforms. Platforms integrated in this app are:
-- [Packlink](https://www.packlink.com/en-GB/)
-- [LetMeShip](https://www.letmeship.com/en/)
-- [SendCloud](https://www.sendcloud.com/home-new/)
+A Shipping Integration for ERPNext with ShipStation platform :
+- [ShipStation](https://www.shipstation.com/)
 
 ## Features
-- Creation of shipment to a carrier service (e.g. FedEx, UPS) via LetMeShip, Packlink, and SendCloud. 
+- Creation of shipment to a carrier service (USPS) via ShipStation.
 - Compare shipping rates. 
 - Printing the shipping label is also made available within the Shipment doctype.
 - Templates for the parcel dimensions.
