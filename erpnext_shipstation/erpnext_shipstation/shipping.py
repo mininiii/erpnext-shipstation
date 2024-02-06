@@ -205,29 +205,11 @@ def print_shipping_label(service_provider, shipment_id):
 	return shipping_label
 
 @frappe.whitelist()
-def update_tracking(shipment, service_provider, shipment_id, delivery_notes=[]):
-	# Update Tracking info in Shipment
-	tracking_data = None
-	if service_provider == LETMESHIP_PROVIDER:
-		letmeship = LetMeShipUtils()
-		tracking_data = letmeship.get_tracking_data(shipment_id)
-	elif service_provider == PACKLINK_PROVIDER:
-		packlink = PackLinkUtils()
-		tracking_data = packlink.get_tracking_data(shipment_id)
-	elif service_provider == SENDCLOUD_PROVIDER:
-		sendcloud = SendCloudUtils()
-		tracking_data = sendcloud.get_tracking_data(shipment_id)
-	elif service_provider == SHIPSTATION_PROVIDER:
+def show_tracking(shipment, service_provider, shipment_id, delivery_notes=[]):
+	if service_provider == SHIPSTATION_PROVIDER:
 		shipstation = ShipStationUtils()
-		tracking_data = sendcloud.get_tracking_data(shipment_id)
-
-	if tracking_data:
-		fields = ['awb_number', 'tracking_status', 'tracking_status_info', 'tracking_url']
-		for field in fields:
-			frappe.db.set_value('Shipment', shipment, field, tracking_data.get(field))
-
-		if delivery_notes:
-			update_delivery_note(delivery_notes=delivery_notes, tracking_info=tracking_data)
+		tracking_data = shipstation.get_tracking_data(shipment_id)
+		return tracking_data
 
 def update_delivery_note(delivery_notes, shipment_info=None, tracking_info=None):
 	# Update Shipment Info in Delivery Note

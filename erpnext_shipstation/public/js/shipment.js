@@ -13,19 +13,20 @@ frappe.ui.form.on('Shipment', {
 				return frm.events.print_shipping_label(frm);
 			}, __('Tools'));
 			if (frm.doc.tracking_status != 'Delivered') {
-				frm.add_custom_button(__('Update Tracking'), function() {
-					return frm.events.update_tracking(frm, frm.doc.service_provider, frm.doc.shipment_id);
-				}, __('Tools'));
+			// 	frm.add_custom_button(__('Show Tracking'), function() {
+			// 		return frm.events.update_tracking(frm, frm.doc.service_provider, frm.doc.shipment_id);
+			// 	}, __('Tools'));
 
 				frm.add_custom_button(__('Track Status'), function() {
-					if (frm.doc.tracking_url) {
-						const urls = frm.doc.tracking_url.split(', ');
-						urls.forEach(url => window.open(url));
-					} else {
-						let msg = __("Please complete Shipment (ID: {0}) on {1} and Update Tracking.", [frm.doc.shipment_id, frm.doc.service_provider]);
-						frappe.msgprint({message: msg, title: __("Incomplete Shipment")});
-					}
-				}, __('View'));
+					// if (frm.doc.tracking_url) {
+					// 	const urls = frm.doc.tracking_url.split(', ');
+					// 	urls.forEach(url => window.open(url));
+					// } else {
+					// 	let msg = __("Please complete Shipment (ID: {0}) on {1} and Update Tracking.", [frm.doc.shipment_id, frm.doc.service_provider]);
+					// 	frappe.msgprint({message: msg, title: __("Incomplete Shipment")});
+					// }
+					return frm.events.show_tracking(frm, frm.doc.service_provider, frm.doc.shipment_id);
+				}, __('Tools'));
 			}
 		}
 	},
@@ -94,13 +95,14 @@ frappe.ui.form.on('Shipment', {
 		});
 	},
 
-	update_tracking: function(frm, service_provider, shipment_id) {
+	show_tracking: function(frm, service_provider, shipment_id) {
 		let delivery_notes = [];
 		(frm.doc.shipment_delivery_note || []).forEach((d) => {
 			delivery_notes.push(d.delivery_note);
 		});
+		
 		frappe.call({
-			method: "erpnext_shipstation.erpnext_shipstation.shipping.update_tracking",
+			method: "erpnext_shipstation.erpnext_shipstation.shipping.show_tracking",
 			freeze: true,
 			freeze_message: __("Updating Tracking"),
 			args: {
@@ -110,8 +112,15 @@ frappe.ui.form.on('Shipment', {
 				delivery_notes: delivery_notes
 			},
 			callback: function(r) {
-				if (!r.exc) {
-					frm.reload_doc();
+				if (r.message) {
+					
+					// URL 변수를 추출합니다.
+					let tracking_number = r.message;
+					// 추적 번호를 URL에 삽입합니다.
+					let url = `https://tools.usps.com/go/TrackConfirmAction?tRef=fullpage&tLc=2&text28777=&tLabels=${tracking_number}%2C&tABt=true`;
+				
+					// 작은 창으로 열기 위한 JavaScript 코드입니다.
+					window.open(url, "_blank", "width=600,height=400");
 				}
 			}
 		});
@@ -205,7 +214,7 @@ function select_from_available_services(frm, available_services) {
 				if (!r.exc) {
 					frm.reload_doc();
 					frappe.msgprint({
-							message: __("Shipment {1} has been created with {0}.", [r.message.service_provider, r.message.shipment_id.bold()]),
+							message: __("Shipment {1} has been created with {0}.", [r.message.service_provider, r.message.shipment_id]),
 							title: __("Shipment Created"),
 							indicator: "green"
 						});
