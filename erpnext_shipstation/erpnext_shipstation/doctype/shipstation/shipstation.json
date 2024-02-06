@@ -37,7 +37,7 @@
  ],
  "issingle": 1,
  "links": [],
- "modified": "2024-01-20 15:36:48.424827",
+ "modified": "2024-02-06 14:05:08.545183",
  "modified_by": "Administrator",
  "module": "ERPNext ShipStation",
  "name": "ShipStation",
@@ -57,5 +57,6 @@
  "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }
