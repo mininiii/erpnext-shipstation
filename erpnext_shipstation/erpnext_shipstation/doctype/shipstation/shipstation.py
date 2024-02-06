@@ -231,8 +231,7 @@ class ShipStationUtils():
     
                     # bulk_insert 메서드를 사용하여 새 문서를 데이터베이스에 삽입합니다.
                     frappe.db.bulk_insert('Shipstation Label', fields, values, ignore_duplicates=False)
-
-
+                    
                 return {
                   'service_provider': SHIPSTATION_PROVIDER,
                   'shipment_id': response_data['shipmentId'],
@@ -244,7 +243,6 @@ class ShipStationUtils():
             elif 'Message' in response_data:
                 frappe.throw(_('An Error occurred while creating Shipment: {0}')
                  .format(response_data['ExceptionMessage']))
-            
         except Exception as e:
             print(f"에러 발생: {e}")
 
@@ -274,7 +272,6 @@ class ShipStationUtils():
         available_service.total_price = response["shipmentCost"]
         available_service.price_info = response["shipmentCost"]
         available_service.other_cost = response["otherCost"]
-
         return available_service
 
     def set_shipstation_specific_fields(self, pickup_contact, delivery_contact):
