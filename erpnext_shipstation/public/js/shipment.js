@@ -13,19 +13,20 @@ frappe.ui.form.on('Shipment', {
 				return frm.events.print_shipping_label(frm);
 			}, __('Tools'));
 			if (frm.doc.tracking_status != 'Delivered') {
-				frm.add_custom_button(__('Update Tracking'), function() {
-					return frm.events.update_tracking(frm, frm.doc.service_provider, frm.doc.shipment_id);
-				}, __('Tools'));
+			// 	frm.add_custom_button(__('Show Tracking'), function() {
+			// 		return frm.events.update_tracking(frm, frm.doc.service_provider, frm.doc.shipment_id);
+			// 	}, __('Tools'));
 
 				frm.add_custom_button(__('Track Status'), function() {
-					if (frm.doc.tracking_url) {
-						const urls = frm.doc.tracking_url.split(', ');
-						urls.forEach(url => window.open(url));
-					} else {
-						let msg = __("Please complete Shipment (ID: {0}) on {1} and Update Tracking.", [frm.doc.shipment_id, frm.doc.service_provider]);
-						frappe.msgprint({message: msg, title: __("Incomplete Shipment")});
-					}
-				}, __('View'));
+					// if (frm.doc.tracking_url) {
+					// 	const urls = frm.doc.tracking_url.split(', ');
+					// 	urls.forEach(url => window.open(url));
+					// } else {
+					// 	let msg = __("Please complete Shipment (ID: {0}) on {1} and Update Tracking.", [frm.doc.shipment_id, frm.doc.service_provider]);
+					// 	frappe.msgprint({message: msg, title: __("Incomplete Shipment")});
+					// }
+					return frm.events.show_tracking(frm, frm.doc.service_provider, frm.doc.shipment_id);
+				}, __('Tools'));
 			}
 		}
 	},
@@ -94,14 +95,14 @@ frappe.ui.form.on('Shipment', {
 		});
 	},
 
-	update_tracking: function(frm, service_provider, shipment_id) {
+	show_tracking: function(frm, service_provider, shipment_id) {
 		let delivery_notes = [];
 		(frm.doc.shipment_delivery_note || []).forEach((d) => {
 			delivery_notes.push(d.delivery_note);
 		});
 		
 		frappe.call({
-			method: "erpnext_shipstation.erpnext_shipstation.shipping.update_tracking",
+			method: "erpnext_shipstation.erpnext_shipstation.shipping.show_tracking",
 			freeze: true,
 			freeze_message: __("Updating Tracking"),
 			args: {

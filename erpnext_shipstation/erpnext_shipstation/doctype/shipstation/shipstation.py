@@ -146,6 +146,7 @@ class ShipStationUtils():
             "phone": ship_from_info["phone"]["phoneNumberPrefix"] + " " + ship_from_info["phone"]["phoneNumber"],
             "residential": False
         }
+
         ship_to = {
             "name": ship_to_info["person"]["firstname"] + " " + ship_to_info["person"]["lastname"],
             "company": ship_to_info["company"],
@@ -190,7 +191,6 @@ class ShipStationUtils():
             )
 
             response_data = json.loads(response_data.text)
-            # print(response_data)
             
             if 'shipmentId' in response_data:
                 awb_number = ''
@@ -199,6 +199,40 @@ class ShipStationUtils():
                    for parcel in tracking_response_data['trackingData']['parcelList']:
                       if 'awbNumber' in parcel:
                          awb_number = parcel['awbNumber']
+
+                # Todo return위로 올리기, test
+                shipment_data = {
+                    'shipment_id': response_data.get('shipmentId'),
+                    'order_id': response_data.get('orderId'),
+                    'order_key': response_data.get('orderKey'),
+                    'user_id': response_data.get('userId'),
+                    'ship_date': response_data.get('shipDate'),
+                    'shipment_cost': response_data.get('shipmentCost'),
+                    'insurance_cost': response_data.get('insuranceCost'),
+                    'tracking_number': response_data.get('trackingNumber'),
+                    'carrier_code': response_data.get('carrierCode'),
+                    'service_code': response_data.get('serviceCode'),
+                    'label_data': response_data.get('labelData'),
+                    'url_reference': response_data.get('urlReference'),
+                    # parent, parentfield, parenttype 필드는 이 예제에서는 처리하지 않습니다.
+                }
+
+                shipment_id = shipment_data.get('shipment_id')  # Shipment ID를 가져옵니다.
+
+                if frappe.db.exists('Shipstation Label', shipment_id):
+                    # 문서가 존재하면, 각 필드를 업데이트합니다.
+                    for field, value in shipment_data.items():
+                        if value is not None:  # 값이 None이 아닌 경우에만 설정
+                            frappe.db.set_value('Shipstation Label', shipment_id, field, value)
+                else:
+                    # 존재하지 않으면, 새 문서를 삽입하기 위한 fields와 values 리스트를 준비합니다.
+                    fields = ["name"] + [field for field in shipment_data.keys() if shipment_data[field] is not None]
+                    values = [[shipment_id] + [shipment_data[field] for field in fields if field != "name"]]
+    
+                    # bulk_insert 메서드를 사용하여 새 문서를 데이터베이스에 삽입합니다.
+                    frappe.db.bulk_insert('Shipstation Label', fields, values, ignore_duplicates=False)
+
+
                 return {
                   'service_provider': SHIPSTATION_PROVIDER,
                   'shipment_id': response_data['shipmentId'],
@@ -210,77 +244,15 @@ class ShipStationUtils():
             elif 'Message' in response_data:
                 frappe.throw(_('An Error occurred while creating Shipment: {0}')
                  .format(response_data['ExceptionMessage']))
-
+            
         except Exception as e:
             print(f"에러 발생: {e}")
 
-    def get_label(self, shipment_id):
-        # Retrieve shipment label from ShipStation
-        try:
-            headers = {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Access-Control-Allow-Origin': 'string'
-            }
-            url = 'https://api.letmeship.com/v1/shipments/{id}/documents?types=LABEL'.format(id=shipment_id)
-            shipment_label_response = requests.get(
-                url,
-                auth=(self.api_id, self.api_password),
-                headers=headers
-            )
-            shipment_label_response_data = json.loads(shipment_label_response.text)
-            if 'documents' in shipment_label_response_data:
-                for label in shipment_label_response_data['documents']:
-                    if 'data' in label:
-                        return json.dumps(label['data'])
-            else:
-                frappe.throw(_('Error occurred while printing Shipment: {0}')
-                    .format(shipment_label_response_data['message']))
-        except Exception:
-            show_error_alert("printing LetMeShip Label")
+
 
     def get_tracking_data(self, shipment_id):
         tracking_number = frappe.db.get_value('Shipstation Label', shipment_id, ['tracking_number'])
         return tracking_number
-    # def get_tracking_data(self, shipment_id):
-    #     from erpnext_shipstation.erpnext_shipstation.utils import get_tracking_url
-    #     # return letmeship tracking data
-    #     headers = {
-    #         'Content-Type': 'application/json',
-    #         'Accept': 'application/json',
-    #         'Access-Control-Allow-Origin': 'string'
-    #     }
-    #     try:
-    #         url = 'https://api.letmeship.com/v1/tracking?shipmentid={id}'.format(id=shipment_id)
-    #         tracking_data_response = requests.get(
-    #             url,
-    #             auth=(self.api_id, self.api_password),
-    #             headers=headers
-    #         )
-    #         tracking_data = json.loads(tracking_data_response.text)
-    #         if 'awbNumber' in tracking_data:
-    #             tracking_status = 'In Progress'
-    #             if tracking_data['lmsTrackingStatus'].startswith('DELIVERED'):
-    #                 tracking_status = 'Delivered'
-    #             if tracking_data['lmsTrackingStatus'] == 'RETURNED':
-    #                 tracking_status = 'Returned'
-    #             if tracking_data['lmsTrackingStatus'] == 'LOST':
-    #                 tracking_status = 'Lost'
-    #             tracking_url = get_tracking_url(
-    #                 carrier=tracking_data['carrier'],
-    #                 tracking_number=tracking_data['awbNumber']
-    #             )
-    #             return {
-    #                 'awb_number': tracking_data['awbNumber'],
-    #                 'tracking_status': tracking_status,
-    #                 'tracking_status_info': tracking_data['lmsTrackingStatus'],
-    #                 'tracking_url': tracking_url,
-    #             }
-    #         elif 'message' in tracking_data:
-    #             frappe.throw(_('Error occurred while updating Shipment: {0}')
-    #                 .format(tracking_data['message']))
-    #     except Exception:
-    #         show_error_alert("updating LetMeShip Shipment")
 
     def generate_payload(self, pickup_address, pickup_contact, delivery_address, delivery_contact,
         description_of_content, value_of_goods, parcel_list, pickup_date, service_info=None):
@@ -339,6 +311,7 @@ class ShipStationUtils():
         # LetMeShip has a limit of 30 characters for Company field
         if len(address.address_title) > 30:
             return address.address_title[:30]
+        return address.address_title
 
     def get_service_dict(self, response):
         """Returns a dictionary with service info."""
