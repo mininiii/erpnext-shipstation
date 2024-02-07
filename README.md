@@ -1,31 +1,33 @@
-## ERPNext Shipping
+## ERPNext Shipstation
 
-A Shipping Integration for ERPNext with ShipStation platform :
-- [ShipStation](https://www.shipstation.com/)
+A Shipping Integration for ERPNext with various platforms. Platforms integrated in this app is:
+- [shipstation](https://www.shipstation.com/)
 
 ## Features
-- Creation of shipment to a carrier service (USPS) via ShipStation.
+- Creation of shipment to a carrier service (e.g. FedEx, UPS) via LetMeShip, Packlink, and SendCloud. 
 - Compare shipping rates. 
 - Printing the shipping label is also made available within the Shipment doctype.
+- Templates for the parcel dimensions.
 - Shipment tracking.
 
 ## Setup
-For the compare shipping rates feature to work as expected, you need to generate an API key from ShipStation
+For the compare shipping rates feature to work as expected, you need to generate an API key from your service provider. Service providers have their own specific doctypes similar to those from the `Integrations`. They can be enabled or disabled depending on your needs.
 
-![ShipStation 2024-02-06 09-54-28](https://github.com/shipstation-techhub/erpnext-shipstation/assets/96100666/a3351eed-e0ac-459e-81c3-b8b713e31be9)
+<img width="1728" alt="image" src="https://github.com/shipstation-techhub/erpnext-shipstation/assets/48901587/012cafd3-53cf-46b3-a554-b69a87dcecef">
 
 ### Fetch Shipping Rates
-![core2](https://user-images.githubusercontent.com/17470909/89377460-70d4a500-d724-11ea-8550-a2813b936651.gif)
+![fetchshippingrates](https://github.com/shipstation-techhub/erpnext-shipstation/assets/48901587/1f9adf0d-59ea-4b19-ac54-fe49bede9032)
+
 
 You can see the list of shipping rates by clicking the `Fetch Shipping Rates` button. Once you picked a rate, it will create the shipment for you. 
 
 ### Shipping Label
-![71bcfc9d-9d66-4a58-8238-1eeab4e9a24f 2020-08-05 09-48-32](https://user-images.githubusercontent.com/17470909/89377478-78944980-d724-11ea-8120-a5374c6e4c5e.png)
+![shippinglabel](https://github.com/shipstation-techhub/erpnext-shipstation/assets/48901587/90f236c8-39c4-4a0c-820d-5b05aa2d6c9e)
 
 The service provider will also provide the shipping label and to generate the label, click on the `Print Shipping Label` on top of the doctype.
 
 ### Tracking Status
-
+![trackstatus](https://github.com/shipstation-techhub/erpnext-shipstation/assets/48901587/a5c7e3de-47f2-454c-8eda-1dbe2000036b)
 
 -----------------------
 #### License
