@@ -7,7 +7,6 @@ A Shipping Integration for ERPNext with ShipStation platform :
 - Creation of shipment to a carrier service (USPS) via ShipStation.
 - Compare shipping rates. 
 - Printing the shipping label is also made available within the Shipment doctype.
-- Templates for the parcel dimensions.
 - Shipment tracking.
 
 ## Setup
