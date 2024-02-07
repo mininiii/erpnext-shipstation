@@ -16,15 +16,18 @@ For the compare shipping rates feature to work as expected, you need to generate
 <img width="1728" alt="image" src="https://github.com/shipstation-techhub/erpnext-shipstation/assets/48901587/012cafd3-53cf-46b3-a554-b69a87dcecef">
 
 ### Fetch Shipping Rates
-![fetchshippingrates](https://github.com/shipstation-techhub/erpnext-shipstation/assets/48901587/f12c74f1-c05c-4e60-aeb2-8cf057cb7dbf)
+![fetchshippingrates](https://github.com/shipstation-techhub/erpnext-shipstation/assets/48901587/1f9adf0d-59ea-4b19-ac54-fe49bede9032)
 
 
 You can see the list of shipping rates by clicking the `Fetch Shipping Rates` button. Once you picked a rate, it will create the shipment for you. 
 
 ### Shipping Label
-![71bcfc9d-9d66-4a58-8238-1eeab4e9a24f 2020-08-05 09-48-32](https://user-images.githubusercontent.com/17470909/89377478-78944980-d724-11ea-8120-a5374c6e4c5e.png)
+![shippinglabel](https://github.com/shipstation-techhub/erpnext-shipstation/assets/48901587/90f236c8-39c4-4a0c-820d-5b05aa2d6c9e)
 
 The service provider will also provide the shipping label and to generate the label, click on the `Print Shipping Label` on top of the doctype.
+
+### Tracking Status
+![trackstatus](https://github.com/shipstation-techhub/erpnext-shipstation/assets/48901587/a5c7e3de-47f2-454c-8eda-1dbe2000036b)
 
 -----------------------
 #### License
