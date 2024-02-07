@@ -10,7 +10,7 @@ A Shipping Integration for ERPNext with ShipStation platform :
 - Shipment tracking.
 
 ## Setup
-For the compare shipping rates feature to work as expected, you need to generate an API key from your service provider. Service providers have their own specific doctypes similar to those from the `Integrations`. They can be enabled or disabled depending on your needs.
+For the compare shipping rates feature to work as expected, you need to generate an API key from your service provider(ShipStation).
 
 ![ShipStation 2024-02-06 09-54-28](https://github.com/shipstation-techhub/erpnext-shipstation/assets/96100666/a3351eed-e0ac-459e-81c3-b8b713e31be9)
 
