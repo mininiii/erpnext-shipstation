@@ -4,14 +4,13 @@ A Shipping Integration for ERPNext with various platforms. Platforms integrated 
 - [shipstation](https://www.shipstation.com/)
 
 ## Features
-- Creation of shipment to a carrier service (e.g. FedEx, UPS) via LetMeShip, Packlink, and SendCloud. 
+- Creation of shipment to a carrier service (e.g. USPS) via ShipStation
 - Compare shipping rates. 
 - Printing the shipping label is also made available within the Shipment doctype.
-- Templates for the parcel dimensions.
 - Shipment tracking.
 
 ## Setup
-For the compare shipping rates feature to work as expected, you need to generate an API key from your service provider. Service providers have their own specific doctypes similar to those from the `Integrations`. They can be enabled or disabled depending on your needs.
+For the compare shipping rates feature to work as expected, you need to generate an API key from ShipStation. 
 
 <img width="1728" alt="image" src="https://github.com/shipstation-techhub/erpnext-shipstation/assets/48901587/012cafd3-53cf-46b3-a554-b69a87dcecef">
 
