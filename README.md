@@ -16,6 +16,7 @@ For the compare shipping rates feature to work as expected, you need to generate
 <img width="1728" alt="image" src="https://github.com/shipstation-techhub/erpnext-shipstation/assets/48901587/012cafd3-53cf-46b3-a554-b69a87dcecef">
 
 ### Fetch Shipping Rates
+![fetchshippingrates](https://github.com/shipstation-techhub/erpnext-shipstation/assets/48901587/f12c74f1-c05c-4e60-aeb2-8cf057cb7dbf)
 
 
 You can see the list of shipping rates by clicking the `Fetch Shipping Rates` button. Once you picked a rate, it will create the shipment for you. 
