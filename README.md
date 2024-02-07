@@ -1,9 +1,7 @@
-## ERPNext Shipping
+## ERPNext Shipstation
 
-A Shipping Integration for ERPNext with various platforms. Platforms integrated in this app are:
-- [Packlink](https://www.packlink.com/en-GB/)
-- [LetMeShip](https://www.letmeship.com/en/)
-- [SendCloud](https://www.sendcloud.com/home-new/)
+A Shipping Integration for ERPNext with various platforms. Platforms integrated in this app is:
+- [shipstation](https://www.shipstation.com/)
 
 ## Features
 - Creation of shipment to a carrier service (e.g. FedEx, UPS) via LetMeShip, Packlink, and SendCloud. 
@@ -15,7 +13,7 @@ A Shipping Integration for ERPNext with various platforms. Platforms integrated 
 ## Setup
 For the compare shipping rates feature to work as expected, you need to generate an API key from your service provider. Service providers have their own specific doctypes similar to those from the `Integrations`. They can be enabled or disabled depending on your needs.
 
-![LetMeShip 2020-08-05 09-54-28](https://user-images.githubusercontent.com/17470909/89377411-500c4f80-d724-11ea-8fe5-b11fec2a5c27.png)
+![Shipstation](<img width="1728" alt="image" src="https://github.com/shipstation-techhub/erpnext-shipstation/assets/48901587/012cafd3-53cf-46b3-a554-b69a87dcecef">)
 
 ![Packlink 2020-08-05 09-53-47](https://user-images.githubusercontent.com/17470909/89377423-56023080-d724-11ea-8396-fb9f60a0d581.png)
 
